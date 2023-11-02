@@ -1,4 +1,3 @@
-import { URL } from 'url';
 import express from 'express';
 import fs from 'fs';
 
@@ -21,15 +20,22 @@ app.get('/pets/:id', (req, res) => {
         res.status(404).send('Not Found');
 }});
 
-app.post('/pets', (req,res) => {
-    const newPet = req.body;
+app.use(express.json());
 
+app.post('/pets', (req,res) => {
+  const newPet = req.body;
     if(!isValidPet(newPet)) {
-        res.status(400).send('Bad Request');
-    }else{
-        pets.push(newPet);
+      res.status(400).send('Bad Request');
+    } else if (isValidPet(newPet)) {
+      pets.push(newPet);
+      writePet(pets);
+      res.status(200).send('Data Received');
     }
-    });
+});
+
+app.use((req,res) => {
+  res.status(404).send('Not Found')
+})
 
 app.listen(PORT, () => {
     console.log('server is running');
@@ -42,4 +48,14 @@ function isValidPet(newPet) {
       typeof newPet.kind === 'string' &&
       typeof newPet.name === 'string'
     );
-  };
+};
+
+function writePet(petList) {
+    fs.writeFile('../pets.json', `${JSON.stringify(petList)}` , (error) => {
+        if(error) {
+        throw error
+       } else {
+         console.log('check JSON File')
+       }
+     })
+}
