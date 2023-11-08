@@ -53,7 +53,12 @@ app.post('/pets', async(req, res) =>{
 
 
 //PUT /PATCH
-
+app.put('/pets/:id', async(req,res)=> {
+  petData = await getPets();
+  const index = req.params.id
+  let adjustedPetData = await adjustPets(index, req.body)
+  res.send(adjustedPetData)
+})
 //DELETE
 
 app.use((req, res, next) => {
@@ -94,6 +99,26 @@ async function writePets(obj){
     console.log(petData)
     petData.push(obj)
     fs.writeFile(dbPath, JSON.stringify(petData) , (error) => {
+      if(error){
+        return {message: 'Error writing to the file'}
+      }
+    })
+    return newPetData
+  } else {
+    console.log("Request body cannot be empty")
+  }
+}
+
+async function adjustPets(index, obj){
+  if(Object.keys(obj).length > 0 ){
+
+    const newPetData = [
+      ...petData.slice(0,index),
+      obj,
+      ...petData.slice(index+1)
+    ]
+
+    fs.writeFile(dbPath, JSON.stringify(newPetData) , (error) => {
       if(error){
         return {message: 'Error writing to the file'}
       }
