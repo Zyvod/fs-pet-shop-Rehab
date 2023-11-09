@@ -60,6 +60,12 @@ app.put('/pets/:id', async(req,res)=> {
   res.send(adjustedPetData)
 })
 //DELETE
+app.delete('/pets/:id', async (req,res) => {
+  petData = await getPets();
+  const index = req.params.id
+  let adjustedPetData = await deletePets(index)
+  res.send(adjustedPetData)
+})
 
 app.use((req, res, next) => {
   next({message: 'The path you are looking for does not exist', status:404})
@@ -127,4 +133,20 @@ async function adjustPets(index, obj){
   } else {
     console.log("Request body cannot be empty")
   }
+}
+
+async function deletePets(index, obj){
+    const newPetData = [
+      ...petData.slice(0,index),
+      ...petData.slice(index+1)
+    ]
+
+    fs.writeFile(dbPath, JSON.stringify(newPetData) , (error) => {
+      if(error){
+        return {message: 'Error writing to the file'}
+      }
+    })
+    return petData
+
+    console.log("Request body cannot be empty")
 }
