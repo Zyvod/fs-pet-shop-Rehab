@@ -8,6 +8,8 @@ let pets = JSON.parse(petData);
 const app = express();
 const PORT = 3000;
 
+app.use(express.json());
+
 app.get('/pets', (req, res) => {
     res.status(200).json(pets);
 });
@@ -19,8 +21,6 @@ app.get('/pets/:id', (req, res) => {
       } else {
         res.status(404).send('Not Found');
 }});
-
-app.use(express.json());
 
 app.post('/pets', (req,res) => {
   const newPet = req.body;
