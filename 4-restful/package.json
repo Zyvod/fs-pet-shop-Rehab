@@ -6,7 +6,8 @@
   "main": "restful.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "express1": "nodemon restful.js"
+    "express1": "nodemon restful.js",
+    "restful1": "nodemon --env-file .env restful.js"
   },
   "author": "",
   "license": "ISC",
